@@ -3,20 +3,20 @@ import string
 
 
 def create_file(namef, dir, size):
-    if(size.isdigit() is not True):
+    if size.isdigit():
         if size.endswith('KB'):
             s1 = size.split('KB')
             size1 = int(s1[0])*1024
             token = ''.join(random.choice(string.ascii_uppercase +
                             string.ascii_lowercase + string.digits)
                             for x in range(size1))
-        if size.endswith('MB') is True:
+        if size.endswith('MB'):
             s1 = size.split('MB')
             size1 = int(s1[0])*1048567
             token = ''.join(random.choice(string.ascii_uppercase +
                             string.ascii_lowercase + string.digits)
                             for x in range(size1))
-        if size.endswith('GB') is True:
+        if size.endswith('GB'):
             s1 = size.split('GB')
             size1 = int(s1[0]) * 1073741824
             token = ''.join(random.choice(string.ascii_uppercase +
@@ -26,7 +26,7 @@ def create_file(namef, dir, size):
         token = ''.join(random.choice(string.ascii_uppercase +
                         string.ascii_lowercase + string.digits)
                         for x in range(int(size)))
-    file = open(dir+namef, "w")
+    file = open(dir + namef, "w")
     file.write(token)
 
 
