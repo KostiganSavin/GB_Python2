@@ -31,4 +31,4 @@ with open(path_to_file, 'w', newline='') as file:
     for item in lst:
         writer.writerow(item)
 
-print(lst)
+# print(lst)
