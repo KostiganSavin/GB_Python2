@@ -26,7 +26,7 @@ with open(path_to_file) as file:
             lst.append(row)
 
 with open(path_to_file, 'w', newline='') as file:
-    writer = csv.writer(file, delimiter=';', )
+    writer = csv.writer(file, delimiter=';')
 
     for item in lst:
         writer.writerow(item)
