@@ -60,7 +60,14 @@ def count_hash(dirname, name_hashfile):
     """
     list_files = os.listdir(os.path.join(BASE_DIR, 'files', dirname))
     for file in list_files:
-        print(file)
+        with open(os.path.join(BASE_DIR, 'files', dirname, file), 'rb') as f:
+            if file.startswith('part'):
+                b = f.read()
+                h = hashlib.md5(b)
+            with open(os.path.join(BASE_DIR, 'files', dirname,
+                                   name_hashfile), 'a') as fh:
+                fh.write('{} \n'.format(h.hexdigest()))
+                # print('file {} - {}'.format(file, h.hexdigest()))
 
 
 if __name__ == '__main__':
