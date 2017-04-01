@@ -36,6 +36,9 @@ def concat_file(dirname, file_hashes, out_file):
 
 
 def split_file(file, size):
+    """
+    Функция производит разбиение заданного файла на чачти заданного размера
+    """
     file_to_split = os.path.join(BASE_DIR, 'files', 'file3', file)
     part = 0
     with open(file_to_split, 'rb') as work_file:
@@ -43,8 +46,8 @@ def split_file(file, size):
             chunk = work_file.read(size)
             if chunk:
                 part += 1
-                name_chunk_file = os.path.join(BASE_DIR, 'files',
-                                               'file3', 'part.' + str(part))
+                name_chunk_file = os.path.join(BASE_DIR, 'files', 'file3',
+                                               'part.{:02d}'.format(part))
                 with open(name_chunk_file, 'wb') as chunk_file:
                     chunk_file.write(chunk)
             else:
@@ -52,10 +55,16 @@ def split_file(file, size):
 
 
 def count_hash(dirname, name_hashfile):
-    pass
+    """
+    Функция осуществ
+    """
+    list_files = os.listdir(os.path.join(BASE_DIR, 'files', dirname))
+    for file in list_files:
+        print(file)
 
 
 if __name__ == '__main__':
     # concat_file('file1', 'parts.md5', 'result_file')
     # concat_file('file2', 'parts.md5', 'result_file')
-    split_file('pdf_file.pdf', 1024)
+    # split_file('pdf_file.pdf', 1024)
+    count_hash('file3', 'parts.md5')
