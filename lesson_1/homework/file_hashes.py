@@ -36,13 +36,26 @@ def concat_file(dirname, file_hashes, out_file):
 
 
 def split_file(file, size):
-    pass
+    file_to_split = os.path.join(BASE_DIR, 'files', 'file3', file)
+    part = 0
+    with open(file_to_split, 'rb') as work_file:
+        while True:
+            chunk = work_file.read(size)
+            if chunk:
+                part += 1
+                name_chunk_file = os.path.join(BASE_DIR, 'files',
+                                               'file3', 'part.' + str(part))
+                with open(name_chunk_file, 'wb') as chunk_file:
+                    chunk_file.write(chunk)
+            else:
+                break
 
 
-def count_hash(dirname, name_hasgfile):
+def count_hash(dirname, name_hashfile):
     pass
 
 
 if __name__ == '__main__':
     # concat_file('file1', 'parts.md5', 'result_file')
-    concat_file('file2', 'parts.md5', 'result_file')
+    # concat_file('file2', 'parts.md5', 'result_file')
+    split_file('pdf_file.pdf', 1024)
