@@ -11,7 +11,10 @@ def find_hash(hash_name, data):
     Функция вычисляющая хэш для заданной строки.
 
     """
-    h = hashlib.new(hash_name, data)
+    if type(data) is bytes:
+        h = hashlib.new(hash_name, data)
+    else:
+        h = hashlib.new(hash_name, data.encode('utf8'))
     return h.hexdigest()
 
 
@@ -20,7 +23,7 @@ with open(path_to_file) as file:
     reader = csv.reader(file, delimiter=';')
     for row in reader:
         if not row[2]:
-            row[2] = find_hash(row[1], row[0].encode('utf8'))
+            row[2] = find_hash(row[1], row[0])
             lst.append(row)
         else:
             lst.append(row)
