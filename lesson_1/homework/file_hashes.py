@@ -56,7 +56,8 @@ def split_file(file, size):
 
 def count_hash(dirname, name_hashfile):
     """
-    Функция осуществ
+    Функция осуществляет подсчет ХЭШ для файлов заданном каталоге и записывает 
+    в файл с заданным именем.
     """
     list_files = os.listdir(os.path.join(BASE_DIR, 'files', dirname))
     for file in list_files:
