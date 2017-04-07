@@ -4,7 +4,7 @@ import sqlite3
 def make_db(clear=None):
     with sqlite3.connect('company.db3') as conn:
         cursor = conn.cursor()
-        if not clear:
+        if clear is not None:
             cursor.execute('drop table if exists terminal;')
             cursor.execute('drop table if exists debit;')
             cursor.execute('drop table if exists credit;')
@@ -53,8 +53,20 @@ def make_db(clear=None):
                        ''')
 
 
+class DbWrite:
+
+    def write_to_terminal():
+        with sqlite3.connect('company.db3') as conn:
+            cursor = conn.cursor()
+            cursor.execute('''insert into terminal
+                            (`configuration`, `title`, `comment`, `pub_key`)
+                            values(?, ?, ?, ?);'''())
+
+
+
 def main():
-    make_db()
+    pass
+    # make_db(clear=1)
 
 
 if __name__ == '__main__':
