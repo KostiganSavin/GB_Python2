@@ -1,5 +1,18 @@
 import socketserver
+import struct
+from collections import namedtuple 
 
+ServiceTransaction = namedtuple('ServiceTransaction', ('''head, lenght,
+                                 term_id, transaction_id, date, time,
+                                 transaction_type, data'''))
+
+PayTransaction = namedtuple('PayTransaction', ('''head, lenght,
+                                 term_id, transaction_id, date, time,
+                                 transaction_type, organization_id, summ'''))
+
+InkassTransaction = namedtuple('InkassTransaction', ('''head, lenght,
+                                 term_id, transaction_id, date, time,
+                                 transaction_type, person_id, summ'''))
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     def handle(self):
