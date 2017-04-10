@@ -25,16 +25,16 @@ def date_encode(year, month, day):
     return date
 
 
-def make_packet(packet_type, data):
-    if packet_type == 'service':
+def make_packet(data):
+    if data.transaction_type == 0:
         packet = struct.pack('2sBHIHI2B', data.head, data.lenght, data.term_id,
                              data.transaction_id, data.date, data.time,
                              data.transaction_type, data.data)
-    elif packet_type == 'pay':
+    elif data.transaction_type == 1:
         packet = struct.pack('2sBHIHIBIQ', data.head, data.lenght, data.term_id,
                              data.transaction_id, data.date, data.time,
                              data.transaction_type, data.organization_id, data.summ)
-    elif packet_type == 'inkass':
+    elif data.transaction_type == 2:
         packet = struct.pack('2sBHIHIBIQ', data.head, data.lenght,
                              data.term_id, data.transaction_id, data.date,
                              data.time, data.transaction_type, data.person_id, data.summ)      
@@ -48,10 +48,10 @@ t = (20012 & 0xffffff)
 st = ServiceTransaction(b'zz', 12, 1, 1, date, t, 0, 0) 
 pt = PayTransaction(b'zz', 24, 1, 1, date, t, 1, 101, 20000)
 it = InkassTransaction(b'zz', 24, 1, 1, date, t, 2, 102, 20000)
-t_lst = {'service': st, 'pay': pt, 'inkass': it}
+t_lst = [st, pt, it]
 
 for item in t_lst:
-    data = make_packet(item, t_lst[item])
+    data = make_packet(item)
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((HOST, PORT))
