@@ -30,12 +30,8 @@ def time_decode(first, second, third):
 
 def len_decode(data):
     chunk = struct.Struct('B')
+    print(chunk.unpack(data[2:3])[0])
     return chunk.unpack(data[2:3])[0]
-
-
-def decode_first(data):
-    first_struckt = struct.Struct('HIH3B')
-    unpacked = first_struckt.unpack(data[3:])
 
 
 def decode_first(data):
@@ -61,9 +57,9 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.data = self.request.recv(1024)
         print('Клиент {} сообщает {}'.format(self.client_address[0], self.data))
         lenght = len_decode(self.data)
-        first_chunk = dcode_first(self.data)
+        # first_chunk = dcode_first(self.data)
 
-        packet_decode(self.data)
+        # packet_decode(self.data)
         # self.request.sendall(bytes(self.data.upper(), 'utf-8'))
         self.request.sendall(self.data)
 
