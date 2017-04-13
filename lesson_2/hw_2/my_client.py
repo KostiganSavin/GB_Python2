@@ -1,17 +1,11 @@
 import socket
 import struct
 import datetime
-from collections import namedtuple
+# from collections import namedtuple
 
-HOST, PORT = 'localhost', 9999
+HOST, PORT = 'localhost', 50113
 PACKET_HEAD = b'zz'
 # data = input('Введите сообщение для сервера:')
-message = dict()
-
-PayTransaction = namedtuple('PayTransaction', ('''lenght,
-                                 term_id, transaction_id, date, time_1,
-                                 time_2, time_3, transaction_type,
-                                 id_, summ'''))
 
 
 def date_encode(year, month, day):
@@ -33,35 +27,69 @@ def time_encode(sec):
     return (first, second, third)
 
 
-pack_struct = struct.Struct('! BH3BHI2B')
-message['lenght'] = pack_struct.size - 1
-d = datetime.date(2017, 4, 3)
-message['date'] = date_encode(d.year, d.month, d.day)
-message['time'] = time_encode(20012)
-message['term_id'] = 1
-message['transact_id'] = 1
-message['transact_type'] = 0
-message['transact_data'] = 0
-print(message)
+def encode_service_transaction(pack_struct):
+    message = dict()
+    message['lenght'] = pack_struct.size - 1
+    d = datetime.date(2017, 4, 3)
+    message['date'] = date_encode(d.year, d.month, d.day)
+    message['time'] = time_encode(20012)
+    message['term_id'] = 1
+    message['transact_id'] = 1
+    message['transact_type'] = 0
+    message['transact_data'] = 0
+    print(message)
+    return message
 
 
-packet = pack_struct.pack(message['lenght'], message['date'], *message['time'],
-                          message['term_id'], message['transact_id'],
-                          message['transact_type'], message['transact_data'])
+def encode_pay_transaction(pack_struct):
+    message = dict()
+    message['lenght'] = pack_struct.size - 1
+    d = datetime.date(2017, 4, 3)
+    message['date'] = date_encode(d.year, d.month, d.day)
+    message['time'] = time_encode(20012)
+    message['term_id'] = 1
+    message['transact_id'] = 1
+    message['transact_type'] = 1
+    message['id_'] = 101
+    message['summ'] = 20005
+    print(message['lenght'])
+    print(message)
+    return message
+
+
+serv_struct = struct.Struct('! BH3BHI2B')
+pay_struct = struct.Struct('! BH3BHIBIQ')
+
+mess = encode_service_transaction(serv_struct)
+mess1 = encode_pay_transaction(pay_struct)
+
+packet = serv_struct.pack(mess['lenght'], mess['date'], *mess['time'],
+                          mess['term_id'], mess['transact_id'],
+                          mess['transact_type'], mess['transact_data'])
+packet1 = pay_struct.pack(mess1['lenght'], mess1['date'], *mess1['time'],
+                          mess1['term_id'], mess1['transact_id'],
+                          mess1['transact_type'], mess1['id_'], mess1['summ'])
+
 packet = PACKET_HEAD + packet
-print(packet)
+packet1 = PACKET_HEAD + packet1
+# print('serv', packet)
+# print('pay', packet1)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.connect((HOST, PORT))
+pack = [packet, packet1]
+print(pack)
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((HOST, PORT))
 # sock.sendall(bytes(data + '\n', 'utf-8'))
-sock.sendall(packet)
+    sock.sendall(pack[1])
 # recived = str(sock.recv(1024), 'utf-8')
-recived = sock.recv(1024)
+    recived = sock.recv(1024)
 
+    print('Отправлено:{}'.format(pack[1]))
+    print('Получено:  {}'.format(recived))
 
-print('Отправлено:{}'.format(packet))
-print('Получено:  {}'.format(recived))
-sock.close()
+# sock.close()
 
 # data = struct.unpack('2sh', recived)
 # print('Распаковано:', data

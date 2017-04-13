@@ -1,4 +1,5 @@
 import socketserver
+import threading
 import datetime
 import struct
 from collections import namedtuple
@@ -56,7 +57,7 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # self.data = self.request.recv(1024).decode()
         self.data = self.request.recv(1024)
         print('Клиент {} сообщает {}'.format(self.client_address[0], self.data))
-        lenght = len_decode(self.data)
+        # lenght = len_decode(self.data)
         # first_chunk = dcode_first(self.data)
 
         # packet_decode(self.data)
@@ -64,10 +65,33 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         self.request.sendall(self.data)
 
 
-if __name__ == '__main__':
-    HOST, PORT = 'localhost', 9999
+class MyThreadedTCPHandler(socketserver.BaseRequestHandler):
+    def handle(self):
+        data = self.request.recv(1024)
+        cur_thread = threading.current_thread()
+        print('Работает поток {}'.format(cur_thread))
+        self.request.sendall(data)
 
-    server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
-    print('Сервер запущен')
+
+class MyThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    pass
+
+
+if __name__ == '__main__':
+    HOST, PORT = 'localhost', 0
+
+    server = MyThreadedTCPServer((HOST, PORT), MyThreadedTCPHandler)
+    server_thread = threading.Thread(target=server.serve_forever)
+    print(server.server_address)
+    server_thread.daemon = True
+    server_thread.start()
+    print('Сервер запущен в многопоточном режиме. поток {}'.format(server_thread.name))
+    # server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
+    # print('Сервер запущен')
+    # print(server.server_address)
 
     server.serve_forever()
+    
+    server.shutdown()
+    server.server_close()
+    print('DONE!')
