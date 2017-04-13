@@ -78,7 +78,7 @@ class MyThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
 
 
 if __name__ == '__main__':
-    HOST, PORT = 'localhost', 0
+    HOST, PORT = 'localhost', 9999
 
     server = MyThreadedTCPServer((HOST, PORT), MyThreadedTCPHandler)
     server_thread = threading.Thread(target=server.serve_forever)
@@ -89,8 +89,9 @@ if __name__ == '__main__':
     # server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
     # print('Сервер запущен')
     # print(server.server_address)
-
-    server.serve_forever()
+    while server_thread.is_alive():
+        pass
+    # server.serve_forever()
     
     server.shutdown()
     server.server_close()

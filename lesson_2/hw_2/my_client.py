@@ -3,7 +3,7 @@ import struct
 import datetime
 # from collections import namedtuple
 
-HOST, PORT = 'localhost', 50113
+HOST, PORT = 'localhost', 9999 
 PACKET_HEAD = b'zz'
 # data = input('Введите сообщение для сервера:')
 
@@ -78,16 +78,17 @@ packet1 = PACKET_HEAD + packet1
 pack = [packet, packet1]
 print(pack)
 
-with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+for item in pack:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.connect((HOST, PORT))
+        sock.connect((HOST, PORT))
 # sock.sendall(bytes(data + '\n', 'utf-8'))
-    sock.sendall(pack[1])
+        sock.sendall(item)
 # recived = str(sock.recv(1024), 'utf-8')
-    recived = sock.recv(1024)
+        recived = sock.recv(1024)
 
-    print('Отправлено:{}'.format(pack[1]))
-    print('Получено:  {}'.format(recived))
+        print('Отправлено:{}'.format(item))
+        print('Получено:  {}'.format(recived))
 
 # sock.close()
 
