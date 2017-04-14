@@ -48,8 +48,8 @@ def encode_pay_transaction(pack_struct):
     message['date'] = date_encode(d.year, d.month, d.day)
     message['time'] = time_encode(20012)
     message['term_id'] = 1
-    message['transact_id'] = 1
-    message['transact_type'] = 1
+    message['transact_id'] = 2
+    message['transact_type'] = 2
     message['id_'] = 101
     message['summ'] = 20005
     print(message['lenght'])

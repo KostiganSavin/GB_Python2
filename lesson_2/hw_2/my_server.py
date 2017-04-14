@@ -6,14 +6,13 @@ from collections import namedtuple
 
 PACKET_HEAD = b'zz'
 
-ServiceTransaction = namedtuple('ServiceTransaction', ('''lenght,
-                                 term_id, transaction_id, date, time_1,
-                                 time_2, time_3, transaction_type, data'''))
+ServiceTransaction = namedtuple('ServiceTransaction', ('''datetimetime,
+                                 term_id, transaction_id,
+                                 transaction_type, data'''))
 
-PayTransaction = namedtuple('PayTransaction', ('''lenght,
-                                 term_id, transaction_id, date, time_1,
-                                 time_2, time_3, transaction_type,
-                                 id_, summ'''))
+PayTransaction = namedtuple('PayTransaction', ('''datetimetime,
+    term_id, transaction_id,
+                                 transaction_type,  id_, summ'''))
 
 
 def date_decode(input_str):
@@ -35,21 +34,41 @@ def len_decode(data):
     return chunk.unpack(data[2:3])[0]
 
 
-def decode_first(data):
-    s_struct = struct.Struct('BHIH3B2B')
-    unpacked = ServiceTransaction._make(s_struct.unpack(data[2:]))
-    unpacked_date = date_decode(unpacked.date)
-    date = datetime.datetime(*unpacked_date)
-    unpacked_time = time_decode(unpacked.time_1,
-                                    unpacked.time_2, unpacked.time_3)
+def decode_service_transaction(packet):
+    serv_struct = struct.Struct('! BH3BHI2B')
+    unpacked = serv_struct.unpack(packet)
+    unpack_date = date_decode(unpacked[1])
+    date = datetime.datetime(*unpack_date)
+    unpacked_time = time_decode(*unpacked[2:5])
     time = datetime.timedelta(seconds=unpacked_time)
     date = date + time
-    print('Длина пакета транзакции: {}'.format(unpacked.lenght))
+    print('')
     print('Дата транзакции: {}'.format(date))
-    print('ID терминала: {}'.format(unpacked.term_id))
-    print('ID транзакции: {}'.format(unpacked.transaction_id))
-    print('Тип транзакции: {}'.format(unpacked.transaction_type))
-    print('Вид транзакции: {}'.format(unpacked.data))
+    print('ID терминала: {}'.format(unpacked[5]))
+    print('ID транзакции: {}'.format(unpacked[6]))
+    print('Тип транзакции: {}'.format(unpacked[7]))
+    print('Вид транзакции: {}'.format(unpacked[8]))
+
+
+def decode_pay_transaction(packet):
+    pay_struct = struct.Struct('! BH3BHIBIQ')
+    unpacked = pay_struct.unpack(packet)
+    unpack_date = date_decode(unpacked[1])
+    date = datetime.datetime(*unpack_date)
+    unpacked_time = time_decode(*unpacked[2:5])
+    time = datetime.timedelta(seconds=unpacked_time)
+    date = date + time
+    print(unpacked)
+    print('Дата транзакции: {}'.format(date))
+    print('ID терминала: {}'.format(unpacked[5]))
+    print('ID транзакции: {}'.format(unpacked[6]))
+    print('Тип транзакции: {}'.format(unpacked[7]))
+    if unpacked[7] == 1:
+        print('id Организации для перевода: {}'.format(unpacked[8]))
+        print('Сумма перевода: {}'.format(unpacked[9]))
+    if unpacked[7] == 2:
+        print('id сотрудника-инкассатора: {}'.format(unpacked[8]))
+        print('Сумма инкассации: {}'.format(unpacked[9]))
 
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
@@ -57,7 +76,11 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         # self.data = self.request.recv(1024).decode()
         self.data = self.request.recv(1024)
         print('Клиент {} сообщает {}'.format(self.client_address[0], self.data))
-        # lenght = len_decode(self.data)
+        lenght = len_decode(self.data)
+        if lenght == 13:
+            decode_service_transaction(self.data[2:])
+        elif lenght == 24:
+            decode_pay_transaction(self.data[2:])
         # first_chunk = dcode_first(self.data)
 
         # packet_decode(self.data)
@@ -70,6 +93,12 @@ class MyThreadedTCPHandler(socketserver.BaseRequestHandler):
         data = self.request.recv(1024)
         cur_thread = threading.current_thread()
         print('Работает поток {}'.format(cur_thread))
+        print('Клиент {} сообщает {}'.format(self.client_address[0], data))
+        lenght = len_decode(data)
+        if lenght == 13:
+            decode_service_transaction(data[2:])
+        elif lenght == 24:
+            decode_pay_transaction(data[2:])
         self.request.sendall(data)
 
 
