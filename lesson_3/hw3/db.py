@@ -1,5 +1,5 @@
 import sqlite3
-
+from collections import namedtupple
 
 def make_db(clear=None):
     with sqlite3.connect('company.db3') as conn:
@@ -53,15 +53,50 @@ def make_db(clear=None):
                        ''')
 
 
+Terminal = namedtupple('Terminal', ('id_', 'configuration', 'title',
+                                    'comment', 'pub_key'))
+Partner = namedtupple('Partner', ('id_', 'title', 'comment'))
+Debit = namedtupple('Debit', ('id_', 'agent_id', 'datetime', 'summ'))
+Credit = namedtupple('Credit', ('id_', 'agent_id', 'datetime', 'summ'))
+Payment = namedtupple('Payment', ('id_', 'datetime', 'terminal_id',
+                                  'transaction_id', 'partner_id', 'summ'))
+
+
 class DbWrite:
 
     def write_to_terminal():
         with sqlite3.connect('company.db3') as conn:
             cursor = conn.cursor()
-            cursor.execute('''insert into terminal
-                            (`configuration`, `title`, `comment`, `pub_key`)
-                            values(?, ?, ?, ?);'''())
+            try:
+                cursor.execute('''insert into `terminal`
+                               (`configuration`, `title`, `comment`, `pub_key`)
+                               values(?, ?, ?, ?);'''())
+                conn.commit()
+            except:
+                conn.rollback()
 
+    def write_to_payment():
+        with sqlite3.connect('conpany.db3') as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('''insert into `payment`
+                               (`datetime`, `terminal_id`, `transaction_id`,
+                               `partner_id`, `summ`)
+                               values(?, ?, ?, ?, ?);'''())
+                conn.commit()
+            except:
+                conn.rollback()
+
+    def write_to_partner():
+        with sqlite3.connect('company.db3') as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute('''insert into `partner`
+                               (`title`, `comment`)
+                               values(?, ?);'''())
+                conn.commit()
+            except:
+                conn.rollback()
 
 
 def main():
