@@ -11,8 +11,13 @@ ServiceTransaction = namedtuple('ServiceTransaction', ('''datetimetime,
                                  transaction_type, data'''))
 
 PayTransaction = namedtuple('PayTransaction', ('''datetimetime,
-    term_id, transaction_id,
-                                 transaction_type,  id_, summ'''))
+                             term_id, transaction_id,
+                             transaction_type,  id_, summ'''))
+
+
+service_transaction_dict = {0: 'выключение', 1: 'Перезагрузка',
+                            2: 'Выключение', 3: 'активация датчика Х',
+                            4: 'блокировка, требуется перезагрузка'}
 
 
 def date_decode(input_str):
@@ -42,12 +47,11 @@ def decode_service_transaction(packet):
     unpacked_time = time_decode(*unpacked[2:5])
     time = datetime.timedelta(seconds=unpacked_time)
     date = date + time
-    print('')
+    print('Сервисная транзакция')
     print('Дата транзакции: {}'.format(date))
     print('ID терминала: {}'.format(unpacked[5]))
     print('ID транзакции: {}'.format(unpacked[6]))
-    print('Тип транзакции: {}'.format(unpacked[7]))
-    print('Вид транзакции: {}'.format(unpacked[8]))
+    print('Вид транзакции: {}'.format(service_transaction_dict[unpacked[8]]))
 
 
 def decode_pay_transaction(packet):
@@ -58,7 +62,6 @@ def decode_pay_transaction(packet):
     unpacked_time = time_decode(*unpacked[2:5])
     time = datetime.timedelta(seconds=unpacked_time)
     date = date + time
-    print(unpacked)
     print('Дата транзакции: {}'.format(date))
     print('ID терминала: {}'.format(unpacked[5]))
     print('ID транзакции: {}'.format(unpacked[6]))

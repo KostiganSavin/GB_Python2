@@ -52,7 +52,6 @@ def encode_pay_transaction(pack_struct):
     message['transact_type'] = 2
     message['id_'] = 101
     message['summ'] = 20005
-    print(message['lenght'])
     print(message)
     return message
 
@@ -70,8 +69,8 @@ packet1 = pay_struct.pack(mess1['lenght'], mess1['date'], *mess1['time'],
                           mess1['term_id'], mess1['transact_id'],
                           mess1['transact_type'], mess1['id_'], mess1['summ'])
 
-packet = PACKET_HEAD + packet
-packet1 = PACKET_HEAD + packet1
+packet = b''.join([PACKET_HEAD, packet])
+packet1 = b''.join([PACKET_HEAD, packet1])
 # print('serv', packet)
 # print('pay', packet1)
 
