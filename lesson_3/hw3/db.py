@@ -11,7 +11,6 @@ def make_db(clear=None):
             cursor.execute('drop table if exists credit;')
             cursor.execute('drop table if exists partner;')
             cursor.execute('drop table if exists payment;')
-        
         cursor.execute('''create table if not exists terminal (
                             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                             configuration TEXT,
@@ -41,7 +40,6 @@ def make_db(clear=None):
                             summ INT,
                             FOREIGN KEY (agent_id) REFERENCES partner(id));
                        ''')
-       
         cursor.execute('''create table if not exists payment (
                             id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                             datetime TEXT,
