@@ -123,7 +123,7 @@ class PaymentDb:
             self.cursor.execute('''insert into `payment`
                                 (`datetime`, `terminal_id`, `transaction_id`,
                                 `partner_id`, `summ`)
-                                values(?, ?, ?, ?, ?);'''(payment.datetime,
+                                values(?, ?, ?, ?, ?);''',(payment.datetime,
                                 payment.terminal_id, payment.transaction_id,
                                 payment.partner_id, payment.summ))
             self.conn.commit()
