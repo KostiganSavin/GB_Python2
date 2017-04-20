@@ -75,7 +75,7 @@ class TerminalDb:
         try:
             self.cursor.execute('''insert into `terminal` (`configuration`,
                                 `title`, `comment`, `pub_key`)
-                                values(?, ?, ?, ?);'''())
+                                values(?, ?, ?, ?);''',())
             self.conn.commit()
         except:
             self.conn.rollback()
@@ -99,7 +99,7 @@ class PartnerDb:
         try:
             self.cursor.execute('''insert into `partner`
                                (`title`, `comment`)
-                               values(?, ?);'''())
+                               values(?, ?);''',())
             self.conn.commit()
         except:
             self.conn.rollback()
