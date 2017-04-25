@@ -85,7 +85,6 @@ class TerminalDb:
     def get_all_terminals(self):
         self.cursor.execute('''select * from `terminal`;''')
         result = self.cursor.fetchall()
-        print(result)
         return result
 
     def get_terminal_by_id(self, id_):
@@ -212,8 +211,12 @@ def main():
     # print(t)
     tr = TerminalDb()
     tw = TerminalWorker(tr)
-    # tw.write_to_terminal(t)
-    t = tw.get_terminal_by_id(1)
+
+    # for i in range(2, 20):
+    #     t = Terminal("00", "{'key': 'Value''}", "Terminal{}".format(i), "Term{}".format(i), "KEY")
+    #     print(t)
+    #     tw.write_to_terminal(t)
+    t = tw.get_all_terminals()
     print(t)
 
 
