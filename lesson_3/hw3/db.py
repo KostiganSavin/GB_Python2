@@ -115,7 +115,10 @@ class PartnerDb:
         return result
 
     def get_partner_by_id(self, id_):
-        pass
+        self.cursor.execute('''select * from `partner` where id = ?;''',
+                            (id_, ))
+        result = self.cursor.fetchone()
+        return result
 
 
 class PaymentDb:
@@ -176,14 +179,14 @@ class PartnerWorker:
     def __init__(self, repository):
         self.repository = repository
 
-    def write_to_partner(self):
-        pass
+    def write_to_partner(self, partner):
+        self.repository.write_to_partner(partner)
 
     def get_all_partners(self):
-        pass
+        return self.repository.get_all_partners()
 
-    def get_partner_by_id(self):
-        pass
+    def get_partner_by_id(self, id_):
+        return Partner(*self.repository.get_partner_by_id(id_))
 
     def delete_partner_by_id(self):
         pass
@@ -193,11 +196,11 @@ class PaymentWorker:
     def __init__(self, repository):
         self.repository = repository
 
-    def write_to_payment(self):
-        pass
+    def write_to_payment(self, payment):
+        self.repository.write_to_payment(payment)
 
     def get_all_payment(self):
-        pass
+        return self.repository.get_all_payments()
 
     def get_payment_by_id(self):
         pass
@@ -209,15 +212,23 @@ def main():
     # make_db(clear=1)
     # t = Terminal("00", "{'key': 'Value''}", "Terminal1", "Term1", "KEY")
     # print(t)
-    tr = TerminalDb()
-    tw = TerminalWorker(tr)
+    # tr = TerminalDb()
+    # tw = TerminalWorker(tr)
 
     # for i in range(2, 20):
     #     t = Terminal("00", "{'key': 'Value''}", "Terminal{}".format(i), "Term{}".format(i), "KEY")
     #     print(t)
     #     tw.write_to_terminal(t)
-    t = tw.get_all_terminals()
-    print(t)
+    # t = tw.get_all_terminals()
+    pr = PartnerDb()
+    pw = PartnerWorker(pr)
+
+    # for i in range(1, 20):
+    #     p = Partner("00", "Company{}".format(i), "Comment")
+    #     print(p)
+    #     pw.write_to_partner(p)
+    p = pw.get_all_partners()
+    print(p)
 
 
 if __name__ == '__main__':
